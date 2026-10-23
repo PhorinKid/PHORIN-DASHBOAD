@@ -16,6 +16,8 @@ Instagram, Facebook, YouTube, X의 KPI와 콘텐츠 성과를 한눈에 확인�
 
 ## 바로 열기
 
+[온라인 대시보드](https://phorinkid.github.io/PHORIN-DASHBOAD/)에서 바로 확인하실 수 있습니다. GitHub Pages는 `main` 브랜치 루트의 `index.html`을 진입 페이지로 사용합니다.
+
 [dist/socialpulse.html](dist/socialpulse.html)을 다운로드하여 브라우저에서 열면 서버나 패키지 설치 없이 사용할 수 있습니다. GitHub 파일 화면은 소스 표시 화면이므로, 파일을 내려받아 열어 주세요.
 
 ## 로컬 실행
@@ -37,7 +39,7 @@ npm test
 npm run build
 ```
 
-`dist/index.html`, `dist/style.css`, `dist/app.mjs`, `dist/core.mjs`가 원본 소스입니다. 썸네일은 `dist/thumbnails/`에 있으며, 빌드하면 이미지 데이터를 포함한 `dist/thumbnail-data.mjs`와 독립 실행 파일 `dist/socialpulse.html`이 생성됩니다. 소스 수정 후 빌드를 실행해 단일 HTML에도 반영해 주세요.
+`dist/index.html`, `dist/style.css`, `dist/app.mjs`, `dist/core.mjs`가 원본 소스입니다. 썸네일은 `dist/thumbnails/`에 있으며, 빌드하면 이미지 데이터를 포함한 `dist/thumbnail-data.mjs`와 독립 실행 파일 `dist/socialpulse.html`, GitHub Pages 진입 페이지 `index.html`이 생성됩니다. 소스 수정 후 빌드를 실행해 두 진입 페이지에 반영해 주세요.
 
 ## 지표 정의
 

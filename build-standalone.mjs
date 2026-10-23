@@ -4,5 +4,7 @@ const assets=await Promise.all(names.map(async n=>'data:image/jpeg;base64,'+(awa
 const thumbnailModule=`export const thumbnailAssets=${JSON.stringify(assets)};`;
 await writeFile('dist/thumbnail-data.mjs',thumbnailModule);
 const html=await readFile('dist/index.html','utf8'),css=await readFile('dist/style.css','utf8'),core=(await readFile('dist/core.mjs','utf8')).replaceAll('export ',''),app=(await readFile('dist/app.mjs','utf8')).replace(/^import[^\n]+\n/gm,'');
-await writeFile('dist/socialpulse.html',html.replace('<link rel="stylesheet" href="style.css">',()=>`<style>${css}</style>`).replace('<script type="module" src="app.mjs"></script>',()=>`<script>${core}\n${thumbnailModule.replace('export ','')}\n${app}</script>`));
-console.log('Standalone dashboard created: dist/socialpulse.html');
+const standalone=html.replace('<link rel="stylesheet" href="style.css">',()=>`<style>${css}</style>`).replace('<script type="module" src="app.mjs"></script>',()=>`<script>${core}\n${thumbnailModule.replace('export ','')}\n${app}</script>`);
+await writeFile('dist/socialpulse.html',standalone);
+await writeFile('index.html',standalone);
+console.log('Standalone dashboard created: dist/socialpulse.html and index.html');
