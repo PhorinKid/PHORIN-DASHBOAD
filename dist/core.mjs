@@ -1,0 +1,5 @@
+export const unique=rows=>[...new Map(rows.map(r=>[`${r.date}|${r.channel}|${r.postId}`,r])).values()];
+export function filterDays(rows,days,anchor){const end=new Date(anchor+'T00:00:00Z');const start=new Date(end);start.setUTCDate(start.getUTCDate()-days+1);return rows.filter(r=>r.date<=anchor&&(!days||r.date>=start.toISOString().slice(0,10)));}
+export function aggregate(rows){rows=unique(rows);const sum=k=>rows.reduce((s,r)=>s+(Number(r[k])||0),0);const last=new Map();[...rows].sort((a,b)=>a.date.localeCompare(b.date)).forEach(r=>last.set(r.channel,r.followers));return {views:sum('views'),posts:new Set(rows.map(r=>r.channel+'|'+r.postId)).size,conversions:sum('saves')+sum('shares')+sum('reposts'),comments:sum('comments'),followers:[...last.values()].reduce((a,b)=>a+b,0)};}
+export const recommend=weeks=>weeks.length?Math.ceil(weeks.reduce((a,b)=>a+b,0)/weeks.length*1.1/100)*100:null;
+export function csv(rows){if(!rows.length)return '\ufeff';const keys=Object.keys(rows[0]);const escape=x=>'"'+String(x??'').replace(/^[=+@-]/,"'$&").replaceAll('"','""')+'"';return '\ufeff'+[keys,...rows.map(r=>keys.map(k=>r[k]))].map(r=>r.map(escape).join(',')).join('\r\n');}

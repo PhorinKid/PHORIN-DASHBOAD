@@ -1,0 +1,1 @@
+{"name":"phorin-dashboard","private":true,"type":"module","scripts":{"build":"node build-standalone.mjs","test":"node --test","start":"node server.mjs"}}
