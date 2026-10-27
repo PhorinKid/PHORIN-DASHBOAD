@@ -107,3 +107,23 @@ test('all published observations and metrics exactly match the verified JSON fil
     assert.ok(snapshot.metrics.every(m=>typeof m.source_url==='string'&&m.source_url.startsWith('https://')));
   }
 });
+
+test('default view has four core channel rows and detailed sources start collapsed',()=>{
+  const d=dashboard();
+  const html=readFileSync(new URL('./index.html',import.meta.url),'utf8');
+  assert.match(html,/<details id="metric-details">/);
+  assert.ok(!/<details id="metric-details"[^>]*\bopen\b/.test(html));
+  assert.equal([...d.elements.get('core-metrics').innerHTML.matchAll(/<tr>/g)].length,4);
+  assert.match(d.elements.get('metric-details-summary').textContent,/120/);
+});
+
+test('core view uses account periods and preserves unavailable metrics',()=>{
+  const d=dashboard();
+  const rows=[...d.elements.get('core-metrics').innerHTML.matchAll(/<tr>(.*?)<\/tr>/g)].map(m=>m[1]);
+  assert.match(rows[0],/196/);assert.match(rows[0],/최근 30일/);
+  assert.match(rows[1],/미제공/);
+  assert.match(rows[2],/33/);
+  assert.match(rows[3],/205/);assert.match(rows[3],/최근 28일/);
+  d.elements.get('date').value='2026-10-24';d.elements.get('date').onchange();
+  assert.match(d.elements.get('core-metrics').innerHTML,/191/);
+});
