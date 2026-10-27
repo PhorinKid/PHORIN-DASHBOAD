@@ -75,3 +75,35 @@ test('changing observation date resets pagination while retaining filters',()=>{
   assert.match(d.elements.get('page-current').textContent,/^1\s*\//);
   assert.match(d.elements.get('updated').textContent,/2026-10-24/);
 });
+
+test('numbered pages stay centered with five choices and shift at either boundary',()=>{
+  const d=dashboard();
+  const numbers=()=>[...d.elements.get('page-numbers').innerHTML.matchAll(/data-page="(\d+)"/g)].map(m=>+m[1]);
+  assert.deepEqual(numbers(),[1,2,3,4,5]);
+  vm.runInContext('metricsPage=6;rows()',d.context);
+  assert.deepEqual(numbers(),[4,5,6,7,8]);
+  assert.match(d.elements.get('page-numbers').innerHTML,/data-page="6"[^>]*aria-current="page"/);
+  d.elements.get('page-last').onclick();
+  assert.deepEqual(numbers(),[8,9,10,11,12]);
+});
+
+test('a numbered button jumps to its page and recenters the available choices',()=>{
+  const d=dashboard();
+  d.elements.get('page-numbers').onclick({target:{closest:()=>({dataset:{page:'5'}})}});
+  assert.match(d.elements.get('page-current').textContent,/5\s*\/\s*12/);
+  assert.match(d.elements.get('page-summary').textContent,/41.*50/);
+  const numbers=[...d.elements.get('page-numbers').innerHTML.matchAll(/data-page="(\d+)"/g)].map(m=>+m[1]);
+  assert.deepEqual(numbers,[3,4,5,6,7]);
+  d.elements.get('search').value='not-a-metric-123456';d.elements.get('search').oninput();
+  assert.equal(d.elements.get('page-numbers').innerHTML,'');
+});
+
+test('all published observations and metrics exactly match the verified JSON files',()=>{
+  const d=dashboard();
+  const snapshots=JSON.parse(vm.runInContext('JSON.stringify(DATA)',d.context));
+  for(const snapshot of snapshots){
+    const file=JSON.parse(readFileSync(new URL('./sns-data-'+snapshot.observed_date_kst+'.json',import.meta.url),'utf8'));
+    assert.deepEqual(snapshot,file,snapshot.observed_date_kst);
+    assert.ok(snapshot.metrics.every(m=>typeof m.source_url==='string'&&m.source_url.startsWith('https://')));
+  }
+});
