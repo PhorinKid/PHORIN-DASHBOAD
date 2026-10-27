@@ -1,10 +1,1 @@
-import {readFile,writeFile} from 'node:fs/promises';
-const names=['alley','walk','sea','city','sunset','weekend','colors','route','cafe','autumn','moment','travel'];
-const assets=await Promise.all(names.map(async n=>'data:image/jpeg;base64,'+(await readFile(`dist/thumbnails/${n}.jpg`)).toString('base64')));
-const thumbnailModule=`export const thumbnailAssets=${JSON.stringify(assets)};`;
-await writeFile('dist/thumbnail-data.mjs',thumbnailModule);
-const html=await readFile('dist/index.html','utf8'),css=await readFile('dist/style.css','utf8'),core=(await readFile('dist/core.mjs','utf8')).replaceAll('export ',''),app=(await readFile('dist/app.mjs','utf8')).replace(/^import[^\n]+\n/gm,'');
-const standalone=html.replace('<link rel="stylesheet" href="style.css">',()=>`<style>${css}</style>`).replace('<script type="module" src="app.mjs"></script>',()=>`<script>${core}\n${thumbnailModule.replace('export ','')}\n${app}</script>`);
-await writeFile('dist/socialpulse.html',standalone);
-await writeFile('index.html',standalone);
-console.log('Standalone dashboard created: dist/socialpulse.html and index.html');
+throw new Error('Legacy demo generation was retired. Serve the verified root index.html instead.');
